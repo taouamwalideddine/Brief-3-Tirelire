@@ -1,5 +1,6 @@
 const express = require('express');
 const connectDB = require('.config/database');
+const UserRoutes = require('./routes/userRoutes');
 
 require('dotenv').config();
 
@@ -8,6 +9,8 @@ const app = express();
 connectDB();
 
 app.use(express.json());
+
+app.use('/api/users',UserRoutes);
 
 app.get('/', (req, res) => res.send('API is running'));
 
