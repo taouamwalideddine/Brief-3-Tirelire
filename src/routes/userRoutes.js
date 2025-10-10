@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
+const auth = require('../middlewares/auth');
 constjwt = require('jsonwebtoken');
 
 const router = express.Router();
@@ -44,5 +45,7 @@ router.post('/login', async(req, res) =>{
         res.status(500).json({massage : 'server error'});
     }
 });
+
+router.get('/protected', auth, (req, res) => {res.send('hi user!! ${req.user.userId}');});
 
 module.exports = router;
