@@ -72,4 +72,63 @@ router.get('/:groupId', auth, async (req, res) => {
   }
 });
 
+// submition
+router.post('/:groupId/contribute', auth, async (req, res) => {
+  try {
+    const group = await Group.findById(req.params.groupId);
+    if (!group) return res.status(404).json({ message: 'Group not found.' });
+
+    if (!group.members.includes(req.user.userId)) 
+      return res.status(403).json({ message: 'Not a group member.' });
+
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    const hasPaid = group.contributions.some(c => 
+      c.user.toString() === req.user.userId &&
+      c.date.getMonth() === currentMonth && 
+      c.date.getFullYear() === currentYear &&
+      c.paid
+    );
+
+    if (hasPaid) return res.status(400).json({ message: 'Contribution for this month already recorded.' });
+
+    group.contributions.push({
+      user: req.user.userId,
+      amount: group.contributionAmount,
+      paid: true,
+      date: new Date()
+    });
+
+    await group.save();
+
+    res.json({ message: 'Contribution submitted successfully.', contributions: group.contributions });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to record contribution.' });
+  }
+});
+
+router.get('/:groupId/contributions', auth, async (req, res) => {
+  try {
+    const group = await Group.findById(req.params.groupId);
+    if (!group) return res.status(404).json({ message: 'Group not found.' });
+
+    if (!group.members.includes(req.user.userId) && req.user.role !== 'Admin')
+      return res.status(403).json({ message: 'Access denied.' });
+
+    let contributions;
+    if (req.user.role === 'Admin') {
+      contributions = group.contributions;
+    } else {
+      contributions = group.contributions.filter(c => c.user.toString() === req.user.userId);
+    }
+
+    res.json(contributions);
+  } catch (error) {
+    res.status(500).json({ message: 'Could not fetch contributions.' });
+  }
+});
+
+
 module.exports = router;
