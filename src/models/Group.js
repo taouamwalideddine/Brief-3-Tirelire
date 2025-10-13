@@ -1,25 +1,23 @@
-const mongoose = require ('mongoose');
-
-
-const ContributionSchema = new mongoose.Schema({
-  user: {    type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  amount: { type: Number, required: true },
-  date: { type: Date, default: Date.now },
-  paid: { type: Boolean, default: false },
-});
+const mongoose = require('mongoose');
 
 const TurnSchema = new mongoose.Schema({
-  user: { type:mongoose.Schema.Types.ObjectId,ref: 'User', required: true },
-  hasReceived: {type: Boolean,default: false },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  hasReceived: { type: Boolean, default: false },
+});
+
+const ContributionSchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  round: { type: Number, required: true },
+  contributed: { type: Boolean, default: false },
 });
 
 const GroupSchema = new mongoose.Schema({
-  name:{type:String,required:true},
-  members: [{type:mongoose.Schema.Types.ObjectId, ref:'User'}],
-  contributionAmount: { type:Number,required:true},
+  name: { type: String, required: true },
+  members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  admin: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   turns: [TurnSchema],
   contributions: [ContributionSchema],
-  admin: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
-}, { timestamps:true });
+  currentRound: { type: Number, default: 1 }
+}, { timestamps: true });
 
-module.exports = mongoose.model('Group', GroupShema);
+module.exports = mongoose.model('Group', GroupSchema);
