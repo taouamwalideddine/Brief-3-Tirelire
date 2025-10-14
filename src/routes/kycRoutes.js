@@ -4,19 +4,18 @@ const path = require('path');
 const fs = require('fs');
 const User  = require('../models/User');
 const auth  = require('../middlewares/auth');
+const dir = 'uploads';
+const { json } = require('stream/consumers');
 
 const router = express.Router();
 
-const uploadDir = path.join(__dirname, '../../uploads');
-
 const storage = multer.diskStorage({
     destination: function(req, file, cb){
-        if(!fs.existsSync(uploadDir)){
-            fs.mkdirSync(uploadDir, {recursive: true});
+        if(!fs.existsSync(dir)){
+            fs.mkdirSync(dir, {recursive: true});
         }
-        cb(null, uploadDir);
-    },
-    filename: function(req, file, cb){
+        cb(null, dir);
+    },filename: function(req, file, cb){
         cb(null, req.user.userId + path.extname(file.originalname));
     },
 });
@@ -43,7 +42,7 @@ router.post('/submit', auth, upload.single('nationalIDImage'), async(req, res) =
         const user = await User.findById(req.user.userId);
         user.nationalID = nationalID;
         user.nationalIDImagePath = req.file.path;
-        user.kycStatus = 'Pending';
+        user.KycStatus = 'Pending';
         await user.save();
 
         res.json({message : 'KYC data submitted succesfully, pending verification'});

@@ -42,10 +42,10 @@ router.post('/login', async(req, res) =>{
         res.json({ token });
     }
     catch(error){
-        res.status(500).json({massage : 'server error'});
+        res.status(500).json({message : 'server error'});
     }
 });
 
-router.get('/protected', auth, (req, res) => {res.send('hi user!! ${req.user.userId}');});
+router.get('/protected', auth, (req, res) => {res.send(`hi user!! ${req.user.userId}`);});
 
 module.exports = router;

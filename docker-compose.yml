@@ -6,22 +6,20 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
       - MONGODB_URI=mongodb://mongo:27017/tirelire
-      - JWT_SECRET=your-super-secret-jwt-key-here
+      - JWT_SECRET=your-secret-key
     depends_on:
       - mongo
     volumes:
       - ./uploads:/app/uploads
 
   mongo:
-    image: mongo:6.0
+    image: mongo:7
     ports:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
-    environment:
-      - MONGO_INITDB_DATABASE=tirelire
 
 volumes:
   mongo_data:
