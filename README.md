@@ -58,3 +58,4 @@ docker-compose up
 5. Admin verify KYC: `POST /api/kyc/verify/:userId`
 6. Create group: `POST /api/groups/create`
 7. Test other group operations
+
